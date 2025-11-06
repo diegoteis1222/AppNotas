@@ -6,6 +6,15 @@
     android:padding="16dp">
 
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="App Notas"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -14,10 +23,11 @@
         android:layout_weight="1" />
 
     <Button
-        android:id="@+id/btnAdd"
+        android:id="@+id/añadirNotaBoton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="15dp"
         android:text="Agregar nota" />
 
 </LinearLayout>
