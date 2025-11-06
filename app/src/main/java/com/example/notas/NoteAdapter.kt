@@ -12,7 +12,7 @@ class NoteAdapter(
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvNote: TextView = itemView.findViewById(R.id.tvNote)
+        val itemNota: TextView = itemView.findViewById(R.id.itemNota)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -23,7 +23,7 @@ class NoteAdapter(
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = notes[position]
-        holder.tvNote.text = note.text
+        holder.itemNota.text = note.text
 
         holder.itemView.setOnLongClickListener {
             onLongClick(position)
