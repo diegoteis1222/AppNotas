@@ -7,11 +7,20 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/nuevaNota"
+        android:id="@+id/nuevoTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:hint="Escribe tu nota" />
+
+    <EditText
+        android:id="@+id/nuevaDescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción"
+        android:layout_marginTop="8dp"
+        android:inputType="textMultiLine"
+        android:minLines="3"/>
 
     <Button
         android:id="@+id/guardarNota"

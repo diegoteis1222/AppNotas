@@ -17,7 +17,7 @@
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/noteDetailTextView"
+        android:id="@+id/detalleTitulo"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,5 +25,12 @@
         android:textAlignment="center"
         android:textSize="30sp"
         tools:text="Texto de la nota" />
+
+    <TextView
+        android:id="@+id/detalleDescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp" />
 
 </LinearLayout>

@@ -12,13 +12,17 @@ class AddNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_note)
 
-        val nuevaNota = findViewById<EditText>(R.id.nuevaNota)
+        val nuevoTitulo = findViewById<EditText>(R.id.nuevoTitulo)
         val guardarNota = findViewById<Button>(R.id.guardarNota)
+        val nuevaDescripcion = findViewById<EditText>(R.id.nuevaDescripcion)
 
         guardarNota.setOnClickListener {
-            val noteText = nuevaNota.text.toString()
+            val noteTitle = nuevoTitulo.text.toString()
+            val noteDescription = nuevaDescripcion.text.toString()
+
             val resultIntent = Intent()
-            resultIntent.putExtra("note", noteText)
+            resultIntent.putExtra("note_title", noteTitle)
+            resultIntent.putExtra("note_description", noteDescription)
             setResult(RESULT_OK, resultIntent)
             finish()
         }

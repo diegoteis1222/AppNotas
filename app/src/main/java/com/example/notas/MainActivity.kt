@@ -1,9 +1,10 @@
 package com.example.notas
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
     private lateinit var notes: MutableList<Note>
+
+    // manejar el resultado de AddNoteActivity
+    private val addNoteLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val noteTitle = data?.getStringExtra("note_title")
+                val noteDescription = data?.getStringExtra("note_description")
+
+                if (!noteTitle.isNullOrEmpty() && noteDescription != null) {
+                    notes.add(Note(noteTitle, noteDescription))
+                    adapter.notifyItemInserted(notes.size - 1)
+                    saveNotes()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,20 +43,14 @@ class MainActivity : AppCompatActivity() {
             // Lógica para borrar
             notes.removeAt(position)
             adapter.notifyItemRemoved(position)
-            adapter.notifyItemRangeChanged(
-                position,
-                notes.size
-            ) // Buena práctica para actualizar posiciones
+            adapter.notifyItemRangeChanged(position, notes.size)
             saveNotes()
         }, { note ->
-            // Lógica para el clic normal (abrir en nueva pantalla)
-            // 1. Crear un Intent para ir de MainActivity a NoteDetailActivity
-            val intent = Intent(this, NoteDetailActivity::class.java)
-
-            // 2. "Empaquetar" el texto de la nota en el Intent usando una clave y un valor.
-            intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TEXT, note.text)
-
-            // 3. Iniciar la nueva actividad.
+            // Lógica para ver la nota con sus detalles
+            val intent = Intent(this, NoteDetailActivity::class.java).apply {
+                putExtra(NoteDetailActivity.EXTRA_NOTE_TITULO, note.text)
+                putExtra(NoteDetailActivity.EXTRA_NOTE_DESCIPCION, note.description)
+            }
             startActivity(intent)
         })
 
@@ -47,35 +58,33 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         añadirNotaBoton.setOnClickListener {
+            // Usamos el nuevo launcher
             val intent = Intent(this, AddNoteActivity::class.java)
-            startActivityForResult(intent, 1)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            val noteText = data?.getStringExtra("note")
-            if (!noteText.isNullOrEmpty()) {
-                notes.add(Note(noteText))
-                adapter.notifyItemInserted(notes.size - 1)
-                saveNotes()
-            }
+            addNoteLauncher.launch(intent)
         }
     }
 
     private fun saveNotes() {
         val prefs = getSharedPreferences("notas", MODE_PRIVATE)
         val editor = prefs.edit()
-        val noteTexts = notes.joinToString("||") { it.text }
-        editor.putString("lista", noteTexts)
+        // Guardamos título y descripción separados por ":::" y las notas por "|||"
+        val noteStrings = notes.joinToString("|||") { "${it.text}:::${it.description}" }
+        editor.putString("lista", noteStrings)
         editor.apply()
     }
 
     private fun loadNotes(): MutableList<Note> {
         val prefs = getSharedPreferences("notas", MODE_PRIVATE)
-        val data = prefs.getString("lista", "") ?: ""
+        val data = prefs.getString("lista", null) ?: return mutableListOf()
         if (data.isEmpty()) return mutableListOf()
-        return data.split("||").map { Note(it) }.toMutableList()
+
+        return data.split("|||").mapNotNull { noteString ->
+            val parts = noteString.split(":::")
+            if (parts.size == 2) {
+                Note(text = parts[0], description = parts[1])
+            } else {
+                null // Ignora las notas con formato incorrecto
+            }
+        }.toMutableList()
     }
 }
