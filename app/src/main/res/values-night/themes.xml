@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Tema Oscuro de la app -->
+    <style name="Theme.Notas" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
+
+        <item name="android:windowBackground">#121212</item>
+
+        <!-- Personalización del texto para que sea legible en fondo oscuro -->
+        <item name="android:textColorPrimary">@color/white</item>
+
+    </style>
+
+</resources>
+
