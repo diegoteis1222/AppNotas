@@ -8,8 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 
 class NoteAdapter(
     private val notes: MutableList<Note>,
-    private val onLongClick: (Int) -> Unit
+    private val onLongClick: (Int) -> Unit,
+    private val onItemClick: (Note) -> Unit
+
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemNota: TextView = itemView.findViewById(R.id.itemNota)
@@ -25,11 +28,19 @@ class NoteAdapter(
         val note = notes[position]
         holder.itemNota.text = note.text
 
+        // Click largo para borrar
         holder.itemView.setOnLongClickListener {
             onLongClick(position)
             true
         }
+
+        // Click normal para ver
+        holder.itemView.setOnClickListener {
+            onItemClick(note)
+        }
     }
 
     override fun getItemCount() = notes.size
+
+
 }

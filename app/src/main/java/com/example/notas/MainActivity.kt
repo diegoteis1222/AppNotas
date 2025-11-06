@@ -3,6 +3,7 @@ package com.example.notas
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,19 +19,34 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recyclerView)
-        val btnAdd = findViewById<Button>(R.id.btnAdd)
+        val añadirNotaBoton = findViewById<Button>(R.id.añadirNotaBoton)
 
         notes = loadNotes()
-        adapter = NoteAdapter(notes) { position ->
+        adapter = NoteAdapter(notes, { position ->
+            // Lógica para borrar
             notes.removeAt(position)
             adapter.notifyItemRemoved(position)
+            adapter.notifyItemRangeChanged(
+                position,
+                notes.size
+            ) // Buena práctica para actualizar posiciones
             saveNotes()
-        }
+        }, { note ->
+            // Lógica para el clic normal (abrir en nueva pantalla)
+            // 1. Crear un Intent para ir de MainActivity a NoteDetailActivity
+            val intent = Intent(this, NoteDetailActivity::class.java)
+
+            // 2. "Empaquetar" el texto de la nota en el Intent usando una clave y un valor.
+            intent.putExtra(NoteDetailActivity.EXTRA_NOTE_TEXT, note.text)
+
+            // 3. Iniciar la nueva actividad.
+            startActivity(intent)
+        })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        btnAdd.setOnClickListener {
+        añadirNotaBoton.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             startActivityForResult(intent, 1)
         }
