@@ -58,9 +58,9 @@ class NoteAdapter(
 
         // Cambia el fondo si el elemento está seleccionado
         if (selectedItems.contains(position)) {
-            holder.itemView.setBackgroundColor(Color.LTGRAY) // Color para item seleccionado
+            holder.itemView.setBackgroundColor(Color.GRAY) // Color para item seleccionado
         } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT) // Color por defecto
+            holder.itemView.setBackgroundColor(Color.DKGRAY) // Color por defecto
         }
 
         // Click largo para borrar

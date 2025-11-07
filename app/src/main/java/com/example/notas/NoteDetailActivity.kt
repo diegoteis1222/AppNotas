@@ -3,9 +3,11 @@ package com.example.notas
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import io.noties.markwon.Markwon
 
 class NoteDetailActivity : AppCompatActivity() {
 
+    //todo Hay que mejorar la descipcion para que sea un MD decente
     companion object {
         // Usamos una constante para la clave del dato que vamos a pasar.
         // Es una buena práctica para evitar errores de escritura.
@@ -27,6 +29,14 @@ class NoteDetailActivity : AppCompatActivity() {
 
         // 3. Poner el texto en el TextView.
         detalleTitulo.text = noteText
-        detalleDescripcion.text = description
+
+        // 1. Crea una instancia de Markwon
+        val markwon = Markwon.create(this)
+
+        // 2. Usa la instancia para establecer el texto con formato Markdown
+        // en el TextView de la descripción.
+        if (description != null) {
+            markwon.setMarkdown(detalleDescripcion, description)
+        }
     }
 }
