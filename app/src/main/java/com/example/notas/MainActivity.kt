@@ -8,6 +8,7 @@ import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -16,8 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
     private lateinit var notes: MutableList<Note>
-    private lateinit var botonBorrarSeleccionados: Button
-    private lateinit var añadirNotaBoton: Button
+    private lateinit var accionBoton: Button
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     // manejar el resultado de AddNoteActivity
@@ -51,8 +51,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         recyclerView = findViewById(R.id.recyclerView)
-        añadirNotaBoton = findViewById(R.id.añadirNotaBoton)
-        botonBorrarSeleccionados = findViewById(R.id.botonBorrarSeleccionados)
+        accionBoton = findViewById(R.id.accionBoton)
 
         notes = loadNotes()
         adapter = NoteAdapter(notes, { note, position ->
@@ -77,38 +76,69 @@ class MainActivity : AppCompatActivity() {
                 adapter.startSelectionMode(position)
                 enterSelectionMode()
             }
+
         })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        añadirNotaBoton.setOnClickListener {
-            // Usamos el nuevo launcher
+        // La configuración inicial del listener se moverá a una función
+        // para poder restaurarla después.
+        setAddNoteListener()
+
+    }
+
+    private fun setAddNoteListener() {
+        accionBoton.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
         }
+    }
 
-        botonBorrarSeleccionados.setOnClickListener {
-            // Lógica para borrar las notas seleccionadas
+    private fun setDeleteNotesListener() {
+        accionBoton.setOnClickListener {
             val selectedNotes = adapter.getSelectedNotes()
             notes.removeAll(selectedNotes.toSet())
             saveNotes()
             exitSelectionMode()
-            // Se usa notifyDataSetChanged porque pueden ser múltiples borrados
             adapter.notifyDataSetChanged()
         }
     }
 
     private fun enterSelectionMode() {
-        botonBorrarSeleccionados.visibility = View.VISIBLE
-        añadirNotaBoton.visibility = View.GONE
+        // Transformamos el botón para que sea "Borrar"
+        accionBoton.text = "Borrar seleccionados"
+        // Opcional: Cambiamos el color para que sea más visual
+        accionBoton.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.my_red_error
+            )
+        )
+        // Cambiamos la acción que ejecutará el botón
+        setDeleteNotesListener()
+
+        // Habilitamos el callback para el botón "atrás"
         onBackPressedCallback.isEnabled = true
     }
 
     private fun exitSelectionMode() {
         adapter.clearSelection()
-        botonBorrarSeleccionados.visibility = View.GONE
-        añadirNotaBoton.visibility = View.VISIBLE
+
+        // Restauramos el botón a su estado original "Agregar Nota"
+        accionBoton.text = "Agregar nota"
+        // Restauramos el color original
+        accionBoton.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.my_blue_primary
+            )
+        )
+
+        // Restauramos la acción original del botón
+        setAddNoteListener()
+
+        // Deshabilitamos el callback
         onBackPressedCallback.isEnabled = false
     }
 
