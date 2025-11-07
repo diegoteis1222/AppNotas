@@ -3,7 +3,9 @@ package com.example.notas
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +16,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
     private lateinit var notes: MutableList<Note>
+    private lateinit var botonBorrarSeleccionados: Button
+    private lateinit var añadirNotaBoton: Button
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
 
     // manejar el resultado de AddNoteActivity
     private val addNoteLauncher =
@@ -35,23 +40,43 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        onBackPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                // Esta es la lógica que se ejecutará cuando el callback esté habilitado
+                // y el usuario presione "Atrás".
+                exitSelectionMode()
+            }
+        }
+        // 2. Añadir el callback al dispatcher.
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
         recyclerView = findViewById(R.id.recyclerView)
-        val añadirNotaBoton = findViewById<Button>(R.id.añadirNotaBoton)
+        añadirNotaBoton = findViewById(R.id.añadirNotaBoton)
+        botonBorrarSeleccionados = findViewById(R.id.botonBorrarSeleccionados)
 
         notes = loadNotes()
-        adapter = NoteAdapter(notes, { position ->
-            // Lógica para borrar
-            notes.removeAt(position)
-            adapter.notifyItemRemoved(position)
-            adapter.notifyItemRangeChanged(position, notes.size)
-            saveNotes()
-        }, { note ->
-            // Lógica para ver la nota con sus detalles
-            val intent = Intent(this, NoteDetailActivity::class.java).apply {
-                putExtra(NoteDetailActivity.EXTRA_NOTE_TITULO, note.text)
-                putExtra(NoteDetailActivity.EXTRA_NOTE_DESCIPCION, note.description)
+        adapter = NoteAdapter(notes, { note, position ->
+            // Si estamos en modo de selección, el clic normal alterna la selección
+            if (adapter.selectionMode) {
+                adapter.toggleSelection(position)
+                // Oculta el botón de borrar si no queda nada seleccionado
+                if (adapter.getSelectedNotes().isEmpty()) {
+                    exitSelectionMode()
+                }
+            } else {
+                // Lógica para ver la nota con sus detalles (clic normal)
+                val intent = Intent(this, NoteDetailActivity::class.java).apply {
+                    putExtra(NoteDetailActivity.EXTRA_NOTE_TITULO, note.text)
+                    putExtra(NoteDetailActivity.EXTRA_NOTE_DESCIPCION, note.description)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
+        }, { position ->
+            // El clic largo inicia el modo de selección
+            if (!adapter.selectionMode) {
+                adapter.startSelectionMode(position)
+                enterSelectionMode()
+            }
         })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -62,6 +87,29 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
         }
+
+        botonBorrarSeleccionados.setOnClickListener {
+            // Lógica para borrar las notas seleccionadas
+            val selectedNotes = adapter.getSelectedNotes()
+            notes.removeAll(selectedNotes.toSet())
+            saveNotes()
+            exitSelectionMode()
+            // Se usa notifyDataSetChanged porque pueden ser múltiples borrados
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun enterSelectionMode() {
+        botonBorrarSeleccionados.visibility = View.VISIBLE
+        añadirNotaBoton.visibility = View.GONE
+        onBackPressedCallback.isEnabled = true
+    }
+
+    private fun exitSelectionMode() {
+        adapter.clearSelection()
+        botonBorrarSeleccionados.visibility = View.GONE
+        añadirNotaBoton.visibility = View.VISIBLE
+        onBackPressedCallback.isEnabled = false
     }
 
     private fun saveNotes() {
