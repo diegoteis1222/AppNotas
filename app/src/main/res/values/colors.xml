@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="my_red_error">#B00020</color> <!-- para errores -->
+    <color name="my_blue_primary">#6200EE</color> <!-- El color primario por defecto de Material -->
 </resources>
