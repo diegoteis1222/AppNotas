@@ -11,26 +11,29 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/app_notas"
+        android:layout_marginTop="30dp"
+        android:text="App Notas"
         android:textAlignment="center"
+        android:textColor="@color/my_blue_primary"
         android:textSize="24sp" />
 
     <TextView
         android:id="@+id/detalleTitulo"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:textAlignment="center"
         android:textSize="30sp"
-        tools:text="Texto de la nota" />
+        tools:text="Titulo de la nota" />
 
     <TextView
         android:id="@+id/detalleDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="16dp"
-        android:textSize="18sp" />
+        android:layout_marginEnd="30dp"
+        android:textSize="18sp"
+        tools:text="Descripcion de la nota" />
 
 </LinearLayout>

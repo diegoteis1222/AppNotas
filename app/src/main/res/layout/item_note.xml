@@ -5,4 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="25dp"
     android:padding="15dp"
+    android:text="Nota de ejemplo"
+    android:textColor="@color/white"
     android:textSize="20sp" />
