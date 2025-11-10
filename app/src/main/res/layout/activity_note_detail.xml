@@ -8,16 +8,6 @@
     tools:context=".NoteDetailActivity">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="App Notas"
-        android:textAlignment="center"
-        android:textColor="@color/my_blue_primary"
-        android:textSize="24sp" />
-
-    <TextView
         android:id="@+id/detalleTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,11 +19,20 @@
     <TextView
         android:id="@+id/detalleDescripcion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="539dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="30dp"
+        android:layout_weight="1"
         android:textSize="18sp"
         tools:text="Descripcion de la nota" />
+
+    <Button
+        android:id="@+id/botonEditar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="15dp"
+        android:text="Editar Nota" />
 
 </LinearLayout>

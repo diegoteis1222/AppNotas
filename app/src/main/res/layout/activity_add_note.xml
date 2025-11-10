@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".AddNoteActivity">
 
     <EditText
         android:id="@+id/nuevoTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:hint="Escribe tu nota"
+        android:hint="Título"
+        android:inputType="textCapWords"
+        android:paddingTop="60dp"
         android:textAlignment="center"
-
-        />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/nuevaDescripcion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Descripción"
-        android:inputType="textMultiLine"
-        android:minLines="3" />
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="1"
+        android:fontFamily="monospace"
+        android:gravity="top"
+        android:hint="Escribe tu nota aquí..."
+        android:inputType="textMultiLine|textCapSentences"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/guardarNota"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginBottom="15dp"
         android:text="Guardar Nota" />
 
 </LinearLayout>
