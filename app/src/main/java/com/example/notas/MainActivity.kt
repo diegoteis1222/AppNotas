@@ -36,6 +36,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private val detailLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val noteTitle = data?.getStringExtra("note_title")
+                val noteDescription = data?.getStringExtra("note_description")
+                val position = data?.getIntExtra("note_position", -1) ?: -1
+
+                if (position != -1 && noteTitle != null && noteDescription != null) {
+                    // Actualiza la nota en la lista
+                    notes[position] = Note(noteTitle, noteDescription)
+                    // Notifica al adaptador del cambio específico
+                    adapter.notifyItemChanged(position)
+                    // Guarda los cambios
+                    saveNotes()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,12 +82,13 @@ class MainActivity : AppCompatActivity() {
                     exitSelectionMode()
                 }
             } else {
-                // Lógica para ver la nota con sus detalles (clic normal)
+                // Lógica para ver la nota (AHORA LANZA CON EL NUEVO LAUNCHER)
                 val intent = Intent(this, NoteDetailActivity::class.java).apply {
                     putExtra(NoteDetailActivity.EXTRA_NOTE_TITULO, note.text)
                     putExtra(NoteDetailActivity.EXTRA_NOTE_DESCIPCION, note.description)
+                    putExtra(NoteDetailActivity.EXTRA_NOTE_POSICION, position)
                 }
-                startActivity(intent)
+                detailLauncher.launch(intent)
             }
         }, { position ->
             // El clic largo inicia el modo de selección
