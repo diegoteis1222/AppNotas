@@ -12,6 +12,7 @@ playServicesAdsApi = "24.7.0"
 recyclerview = "1.4.0"
 appcompat = "1.7.1"
 markwon = "4.6.2"
+coil = "2.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,10 @@ play-services-ads-api = { group = "com.google.android.gms", name = "play-service
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "markwon" }
+markwon-editor = { group = "io.noties.markwon", name = "editor", version.ref = "markwon" }
+markwon-image-coil = { group = "io.noties.markwon", name = "image-coil", version.ref = "markwon" }
+coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

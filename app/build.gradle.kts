@@ -61,4 +61,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.markwon.core)
+    implementation(libs.markwon.editor)
+    implementation(libs.markwon.image.coil)
+    implementation(libs.coil.kt)
 }
