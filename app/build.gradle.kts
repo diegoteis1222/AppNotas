@@ -53,6 +53,7 @@ dependencies {
     //implementation(libs.play.services.ads.api)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.appcompat)
+    implementation(libs.filament.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,4 +65,5 @@ dependencies {
     implementation(libs.markwon.editor)
     implementation(libs.markwon.image.coil)
     implementation(libs.coil.kt)
+    implementation(libs.material)
 }

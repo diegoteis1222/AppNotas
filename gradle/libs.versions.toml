@@ -13,6 +13,8 @@ recyclerview = "1.4.0"
 appcompat = "1.7.1"
 markwon = "4.6.2"
 coil = "2.5.0"
+filamentAndroid = "1.17.1"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +38,8 @@ markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "mark
 markwon-editor = { group = "io.noties.markwon", name = "editor", version.ref = "markwon" }
 markwon-image-coil = { group = "io.noties.markwon", name = "image-coil", version.ref = "markwon" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+filament-android = { group = "com.google.ar.sceneform", name = "filament-android", version.ref = "filamentAndroid" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 [plugins]
