@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
+    // ---- Lista de cosas a hacer-----
+    // todo cambiar entre tema claro y oscuro
+    // todo cambiar el fondo de la descipcion para que parezca MD
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
     private lateinit var notes: MutableList<Note>
