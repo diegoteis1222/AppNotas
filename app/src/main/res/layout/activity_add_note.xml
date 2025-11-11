@@ -11,11 +11,26 @@
         android:id="@+id/nuevoTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:hint="Título"
         android:inputType="textCapWords"
-        android:layout_marginTop="40dp"
         android:textAlignment="center"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/background_error"
+        android:padding="12dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:text="Debes añadir un título"
+        tools:visibility="visible" />
 
     <EditText
         android:id="@+id/nuevaDescripcion"

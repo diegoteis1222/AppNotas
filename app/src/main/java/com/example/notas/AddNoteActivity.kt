@@ -1,10 +1,17 @@
 package com.example.notas
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import android.widget.TextView
 import io.noties.markwon.Markwon
 import io.noties.markwon.editor.MarkwonEditor
 import io.noties.markwon.editor.MarkwonEditorTextWatcher
@@ -21,6 +28,7 @@ class AddNoteActivity : AppCompatActivity() {
         val nuevoTitulo = findViewById<EditText>(R.id.nuevoTitulo)
         val guardarNota = findViewById<Button>(R.id.guardarNota)
         val nuevaDescripcion = findViewById<EditText>(R.id.nuevaDescripcion)
+        val errorTextView = findViewById<TextView>(R.id.errorTextView)
 
         val currentTitle = intent.getStringExtra("current_title")
         val currentDescription = intent.getStringExtra("current_description")
@@ -46,16 +54,51 @@ class AddNoteActivity : AppCompatActivity() {
             MarkwonEditorTextWatcher.withProcess(editor)
         )
         guardarNota.setOnClickListener {
-            val noteTitle = nuevoTitulo.text.toString()
-            val noteDescription = nuevaDescripcion.text.toString()
+            val noteTitle = nuevoTitulo.text.toString().trim()
+            val noteDescription = nuevaDescripcion.text.toString().trim()
 
-            if (noteTitle.isNotEmpty()) {
-                val resultIntent = Intent()
-                resultIntent.putExtra("note_title", noteTitle)
-                resultIntent.putExtra("note_description", noteDescription)
-                setResult(RESULT_OK, resultIntent)
-                finish()
+            // --- LÓGICA DE VALIDACIÓN ---
+
+            // 1. Siempre oculta el error al empezar
+            errorTextView.visibility = View.GONE
+
+            // 2. Comprueba el título
+            if (noteTitle.isEmpty()) {
+                errorTextView.text = "Debes añadir un título"
+
+                // --- ANIMACIÓN DE APARICIÓN ---
+                val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+                errorTextView.startAnimation(fadeIn)
+                errorTextView.visibility = View.VISIBLE
+
+                // --- ANIMACIÓN DE DESAPARICIÓN ---
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+                    errorTextView.startAnimation(fadeOut)
+
+                    // Importante: Oculta la vista DESPUÉS de que la animación termine
+                    fadeOut.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationStart(animation: Animation?) {}
+                        override fun onAnimationEnd(animation: Animation?) {
+                            errorTextView.visibility = View.GONE
+                        }
+                        override fun onAnimationRepeat(animation: Animation?) {}
+                    })
+                }, 3000)
+
+                return@setOnClickListener
             }
+
+            val resultIntent = Intent()
+            resultIntent.putExtra("note_title", noteTitle)
+            resultIntent.putExtra("note_description", noteDescription)
+
+            if (notePosition != -1) {
+                resultIntent.putExtra("note_position", notePosition)
+            }
+
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
     }
 }
