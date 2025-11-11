@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:hint="Título"
         android:inputType="textCapWords"
-        android:paddingTop="60dp"
+        android:layout_marginTop="40dp"
         android:textAlignment="center"
         android:textSize="20sp" />
 

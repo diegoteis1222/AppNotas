@@ -11,7 +11,7 @@
         android:id="@+id/detalleTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="40dp"
         android:textAlignment="center"
         android:textSize="30sp"
         tools:text="Titulo de la nota" />
