@@ -23,33 +23,36 @@ class AddNoteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_note)
+        setContentView(R.layout.activity_add_note) //le dice que layout usar
 
+        //Finders
         val nuevoTitulo = findViewById<EditText>(R.id.nuevoTitulo)
         val guardarNota = findViewById<Button>(R.id.guardarNota)
         val nuevaDescripcion = findViewById<EditText>(R.id.nuevaDescripcion)
         val errorTextView = findViewById<TextView>(R.id.errorTextView)
 
+        // Recibe los valores desde NoteDetailActivity
         val currentTitle = intent.getStringExtra("current_title")
         val currentDescription = intent.getStringExtra("current_description")
         notePosition = intent.getIntExtra("note_position", -1)
 
+        // Si no son null significa que ya existe por lo que es una edicion
         if (currentTitle != null && currentDescription != null) {
             nuevoTitulo.setText(currentTitle)
             nuevaDescripcion.setText(currentDescription)
             guardarNota.text = "Guardar Cambios" // Cambia el texto del botón
         }
 
-        // 1. Crea una instancia de Markwon usando su constructor (builder)
+        // Crea una instancia de Markwon usando su constructor (builder)
         val markwon = Markwon.builder(this)
-            // 2. Añade el plugin de imágenes, que usará Coil para cargar las fotos
+            // Añade el plugin de imágenes, que usará Coil para cargar las fotos todo arreglar esto
             .usePlugin(CoilImagesPlugin.create(this))
             .build()
 
-        // 3. Crea el editor de Markwon
+        // Crea el editor de Markwon
         val editor = MarkwonEditor.create(markwon)
 
-        // 4. Asigna el TextWatcher al EditText
+        // Asigna el TextWatcher al EditText
         nuevaDescripcion.addTextChangedListener(
             MarkwonEditorTextWatcher.withProcess(editor)
         )
@@ -59,40 +62,43 @@ class AddNoteActivity : AppCompatActivity() {
 
             // --- LÓGICA DE VALIDACIÓN ---
 
-            // 1. Siempre oculta el error al empezar
+            // El error permace oculto de base
             errorTextView.visibility = View.GONE
 
-            // 2. Comprueba el título
+            // Comprueba si escribiste algo en titulo
             if (noteTitle.isEmpty()) {
                 errorTextView.text = "Debes añadir un título"
 
                 // --- ANIMACIÓN DE APARICIÓN ---
-                val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
-                errorTextView.startAnimation(fadeIn)
-                errorTextView.visibility = View.VISIBLE
+                val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in) // carga la animación de aparicion
+                errorTextView.startAnimation(fadeIn) // ejecuta la animación
+                errorTextView.visibility = View.VISIBLE // pone el error visible
 
                 // --- ANIMACIÓN DE DESAPARICIÓN ---
                 Handler(Looper.getMainLooper()).postDelayed({
-                    val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-                    errorTextView.startAnimation(fadeOut)
+                    val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out) // carga la animación de desaparicion
+                    errorTextView.startAnimation(fadeOut) // ejecuta la animación
 
                     // Importante: Oculta la vista DESPUÉS de que la animación termine
                     fadeOut.setAnimationListener(object : Animation.AnimationListener {
                         override fun onAnimationStart(animation: Animation?) {}
                         override fun onAnimationEnd(animation: Animation?) {
-                            errorTextView.visibility = View.GONE
+                            errorTextView.visibility = View.GONE // oculta el error
                         }
                         override fun onAnimationRepeat(animation: Animation?) {}
                     })
-                }, 3000)
+                }, 3000) // a los 3 segundos desaparece
 
                 return@setOnClickListener
             }
 
+            // Se crea un Intent vacio
             val resultIntent = Intent()
+            // Se añaden los datos a enviar
             resultIntent.putExtra("note_title", noteTitle)
             resultIntent.putExtra("note_description", noteDescription)
 
+            // Comprueba si estamos en modo edicion
             if (notePosition != -1) {
                 resultIntent.putExtra("note_position", notePosition)
             }

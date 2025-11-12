@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                     exitSelectionMode()
                 }
             } else {
-                // Lógica para ver la nota (AHORA LANZA CON EL NUEVO LAUNCHER)
+                // Envia a traves del intent los datos de la nota a NotaDetalActivity
                 val intent = Intent(this, NoteDetailActivity::class.java).apply {
                     putExtra(NoteDetailActivity.EXTRA_NOTE_TITULO, note.text)
                     putExtra(NoteDetailActivity.EXTRA_NOTE_DESCIPCION, note.description)

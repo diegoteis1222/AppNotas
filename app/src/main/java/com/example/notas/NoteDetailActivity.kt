@@ -11,12 +11,15 @@ import io.noties.markwon.Markwon
 
 class NoteDetailActivity : AppCompatActivity() {
 
+    // Es un objeto singleton asociado a una clase. Solo puede haber uno por clase.
+    // Sus miembros pueden ser invocados directamente usando el nombre de la clase.
     companion object {
         const val EXTRA_NOTE_TITULO = "extra_note_titulo"
         const val EXTRA_NOTE_DESCIPCION = "extra_note_descripcion"
         const val EXTRA_NOTE_POSICION = "extra_note_posicion"
     }
 
+    //lateint significa que vas a inicializarlo mas tarde.
     private lateinit var textViewTitulo: TextView
     private lateinit var textViewDescripcion: TextView
     private lateinit var markwon: Markwon
@@ -48,16 +51,18 @@ class NoteDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_note_detail)
+        setContentView(R.layout.activity_note_detail) //le dice que layout usar
 
-        // Inicializa Markwon para renderizar Markdown
+
+        // Inicializacion de Markwon para renderizar Markdown
         markwon = Markwon.create(this)
 
+        //finders
         textViewTitulo = findViewById(R.id.detalleTitulo)
         textViewDescripcion = findViewById(R.id.detalleDescripcion)
         val botonEditar: Button = findViewById(R.id.botonEditar)
 
-        // Recibe los datos de MainActivity
+        // Recibe los datos de MainActivity usando el intent
         val titulo = intent.getStringExtra(EXTRA_NOTE_TITULO)
         val descripcion = intent.getStringExtra(EXTRA_NOTE_DESCIPCION)
         notePosition = intent.getIntExtra(EXTRA_NOTE_POSICION, -1)
@@ -66,11 +71,12 @@ class NoteDetailActivity : AppCompatActivity() {
         textViewTitulo.text = titulo
         markwon.setMarkdown(textViewDescripcion, descripcion ?: "")
 
+        // logica para editar la nota
         botonEditar.setOnClickListener {
             // Lanza AddNoteActivity en modo "edición"
             val intent = Intent(this, AddNoteActivity::class.java).apply {
                 putExtra("current_title", textViewTitulo.text.toString())
-                putExtra("current_description", descripcion) // Pasa el MD original
+                putExtra("current_description", descripcion)
                 putExtra("note_position", notePosition)
             }
             editLauncher.launch(intent)
