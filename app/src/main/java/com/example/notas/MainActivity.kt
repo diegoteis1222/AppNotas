@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -27,11 +28,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var accionBoton: Button
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
+    //Para el menu
+    private lateinit var menuIcon: ImageView
+
     private lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
     private lateinit var navigationView: com.google.android.material.navigation.NavigationView
     private lateinit var toggle: androidx.appcompat.app.ActionBarDrawerToggle
 
-    private lateinit var openMenuButton: Button //provisional
+
 
     // manejar el resultado de AddNoteActivity
     private val addNoteLauncher =
@@ -118,14 +122,32 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         accionBoton = findViewById(R.id.accionBoton)
-        openMenuButton = findViewById(R.id.openMenuButton) //Provisional
+        menuIcon = findViewById(R.id.menu_icon)
 
-
-        // provisional para abrir el menu
-        openMenuButton.setOnClickListener {
-            // Esta línea abre el menú lateral desde la izquierda (start)
+        // Configurar el listener para el icono del menú
+        menuIcon.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
-        } //Provisional
+        }
+
+        // --- Logica del menu ---
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Comprobar si el menú lateral está abierto
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    // Si está abierto, cerrarlo
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    // Si el menú está cerrado, realizar la acción de retroceso por defecto.
+                    // Para ello, desactivamos temporalmente este callback y volvemos a llamar al dispatcher.
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        }
+
+        // Añadir el callback al dispatcher
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        // --- Fin logica del menu ---
 
         notes = loadNotes()
         adapter = NoteAdapter(notes, { note, position ->
