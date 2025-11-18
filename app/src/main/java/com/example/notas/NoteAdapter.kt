@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
+import io.noties.markwon.Markwon
 
 class NoteAdapter(
     private val notes: MutableList<Note>,
