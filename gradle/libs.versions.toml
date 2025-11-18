@@ -15,6 +15,7 @@ markwon = "4.6.2"
 coil = "2.5.0"
 filamentAndroid = "1.17.1"
 material = "1.12.0"
+markdownviewAndroid = "1.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +41,7 @@ markwon-image-coil = { group = "io.noties.markwon", name = "image-coil", version
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 filament-android = { group = "com.google.ar.sceneform", name = "filament-android", version.ref = "filamentAndroid" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+markdownview-android = { group = "com.github.mukeshsolanki", name = "MarkdownView-Android", version.ref = "markdownviewAndroid" }
 
 
 [plugins]

@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.markwon.image.coil)
     implementation(libs.coil.kt)
     implementation(libs.material)
+    implementation (libs.markdownview.android)
 }
