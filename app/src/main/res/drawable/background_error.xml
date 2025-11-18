@@ -8,4 +8,10 @@
     <!-- Define el radio de las esquinas. Puedes ajustar "16dp" al valor que prefieras. -->
     <corners android:radius="16dp" />
 
+    <padding
+        android:left="12dp"
+        android:top="12dp"
+        android:right="12dp"
+        android:bottom="12dp" />
+
 </shape>
