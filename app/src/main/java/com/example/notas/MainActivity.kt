@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -17,13 +18,20 @@ class MainActivity : AppCompatActivity() {
     // ---- Lista de cosas a hacer-----
     // todo cambiar entre tema claro y oscuro
     // todo cambiar el fondo de la descipcion para que parezca MD
-    // todo arreglar el fondo negro en el mensaje de error
+    // todo arreglar el fondo negro en el mensaje de error o cambiarlo a un toast
     // todo comentar el codigo del main
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
     private lateinit var notes: MutableList<Note>
     private lateinit var accionBoton: Button
     private lateinit var onBackPressedCallback: OnBackPressedCallback
+
+    private lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
+    private lateinit var navigationView: com.google.android.material.navigation.NavigationView
+    private lateinit var toggle: androidx.appcompat.app.ActionBarDrawerToggle
+
+    private lateinit var openMenuButton: Button //provisional
 
     // manejar el resultado de AddNoteActivity
     private val addNoteLauncher =
@@ -64,6 +72,40 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Código del menú
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navigationView = findViewById(R.id.nav_view)
+
+        toggle = androidx.appcompat.app.ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            R.string.open,
+            R.string.close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_notas -> {
+                    drawerLayout.closeDrawers()
+                }
+
+                R.id.nav_configuracion -> {
+                    // Lógica para ir a la pantalla de configuración
+                    drawerLayout.closeDrawers()
+                }
+
+                R.id.nav_acerca_de -> {
+                    // Lógica para ir a la pantalla "Acerca de"
+                    drawerLayout.closeDrawers()
+                }
+            }
+            true
+        } // Fin código del menú
+
         onBackPressedCallback = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
                 // Esta es la lógica que se ejecutará cuando el callback esté habilitado
@@ -76,6 +118,14 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         accionBoton = findViewById(R.id.accionBoton)
+        openMenuButton = findViewById(R.id.openMenuButton) //Provisional
+
+
+        // provisional para abrir el menu
+        openMenuButton.setOnClickListener {
+            // Esta línea abre el menú lateral desde la izquierda (start)
+            drawerLayout.openDrawer(GravityCompat.START)
+        } //Provisional
 
         notes = loadNotes()
         adapter = NoteAdapter(notes, { note, position ->
@@ -189,5 +239,12 @@ class MainActivity : AppCompatActivity() {
                 null // Ignora las notas con formato incorrecto
             }
         }.toMutableList()
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
