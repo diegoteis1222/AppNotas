@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Código del menú
+        // --- CODIGO DEL MENU ---
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
 
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             true
-        } // Fin código del menú
+        } // --- FIN CODIGO DEL MENU ---
 
         onBackPressedCallback = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {

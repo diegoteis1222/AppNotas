@@ -43,24 +43,11 @@ class AddNoteActivity : AppCompatActivity() {
             guardarNota.text = "Guardar Cambios" // Cambia el texto del botón
         }
 
-        // Crea una instancia de Markwon usando su constructor (builder)
-        val markwon = Markwon.builder(this)
-            // Añade el plugin de imágenes, que usará Coil para cargar las fotos todo arreglar esto
-            .usePlugin(CoilImagesPlugin.create(this))
-            .build()
-
-        // Crea el editor de Markwon
-        val editor = MarkwonEditor.create(markwon)
-
-        // Asigna el TextWatcher al EditText
-        nuevaDescripcion.addTextChangedListener(
-            MarkwonEditorTextWatcher.withProcess(editor)
-        )
         guardarNota.setOnClickListener {
             val noteTitle = nuevoTitulo.text.toString().trim()
             val noteDescription = nuevaDescripcion.text.toString().trim()
 
-            // --- LÓGICA DE VALIDACIÓN ---
+            // --- LOGICA DE VALIDACIÓN ---
 
             // El error permace oculto de base
             errorTextView.visibility = View.GONE
@@ -69,17 +56,17 @@ class AddNoteActivity : AppCompatActivity() {
             if (noteTitle.isEmpty()) {
                 errorTextView.text = "Debes añadir un título"
 
-                // --- ANIMACIÓN DE APARICIÓN ---
+                // Animacion de aparicion
                 val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in) // carga la animación de aparicion
                 errorTextView.startAnimation(fadeIn) // ejecuta la animación
                 errorTextView.visibility = View.VISIBLE // pone el error visible
 
-                // --- ANIMACIÓN DE DESAPARICIÓN ---
+                // Animacion de desaparicion
                 Handler(Looper.getMainLooper()).postDelayed({
                     val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out) // carga la animación de desaparicion
                     errorTextView.startAnimation(fadeOut) // ejecuta la animación
 
-                    // Importante: Oculta la vista DESPUÉS de que la animación termine
+                    // OcultaR la vista despues de que la animación termine
                     fadeOut.setAnimationListener(object : Animation.AnimationListener {
                         override fun onAnimationStart(animation: Animation?) {}
                         override fun onAnimationEnd(animation: Animation?) {
@@ -91,6 +78,8 @@ class AddNoteActivity : AppCompatActivity() {
 
                 return@setOnClickListener
             }
+
+            // --- FIN LOGICA DE VALIDACIÓN ---
 
             // Se crea un Intent vacio
             val resultIntent = Intent()

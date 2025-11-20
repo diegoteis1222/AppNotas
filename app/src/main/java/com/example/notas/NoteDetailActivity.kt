@@ -54,11 +54,7 @@ class NoteDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note_detail) //le dice que layout usar
 
-        val markdownView = findViewById<MarkdownView>(R.id.markdown_view)
-        val tuTextoMarkdown = "Este es un ejemplo de texto con una imagen: ![Logo de Google](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)"
-        markdownView.setMarkDownText(tuTextoMarkdown)
-
-        // Inicializacion de Markwon para renderizar Markdown
+        //instancia de la clase Markwon
         markwon = Markwon.create(this)
 
         //finders
