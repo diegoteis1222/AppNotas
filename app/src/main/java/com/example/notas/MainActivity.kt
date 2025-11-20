@@ -3,41 +3,48 @@ package com.example.notas
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
 
+/**
+ * Actividad principal de la aplicación. Muestra la lista de notas del usuario
+ * y permite crearlas, verlas, editarlas y borrarlas.
+ */
 class MainActivity : AppCompatActivity() {
 
     // ---- Lista de cosas a hacer-----
     // todo cambiar entre tema claro y oscuro
     // todo cambiar el fondo de la descipcion para que parezca MD
     // todo arreglar el fondo negro en el mensaje de error o cambiarlo a un toast
-    // todo comentar el codigo del main
 
+    // --- Variables y Vistas de la Clase ---
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
     private lateinit var notes: MutableList<Note>
     private lateinit var accionBoton: Button
+    private lateinit var menuIcon: ImageView
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
-    //Para el menu
-    private lateinit var menuIcon: ImageView
+    // --- Launchers para resultados de Actividades ---
 
-    private lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
-    private lateinit var navigationView: com.google.android.material.navigation.NavigationView
-    private lateinit var toggle: androidx.appcompat.app.ActionBarDrawerToggle
-
-
-
-    // manejar el resultado de AddNoteActivity
+    /**
+     * Gestiona el resultado de [AddNoteActivity]. Se activa cuando el usuario crea una nueva nota.
+     * Si el resultado es [Activity.RESULT_OK], extrae los datos de la nota, la añade a la lista
+     * y la acrualiza.
+     */
     private val addNoteLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -53,6 +60,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Gestiona el resultado de [NoteDetailActivity]. Se activa cuando el usuario edita una nota existente.
+     * Si el resultado es [Activity.RESULT_OK], actualiza la nota en la posición correspondiente
+     * de la lista y guarda los cambios.
+     */
     private val detailLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -72,94 +84,81 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Punto de entrada de la actividad. Se llama cuando la actividad se crea por primera vez.
+     * Orquesta la inicialización de las vistas, datos, listeners y otros componentes.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // --- CODIGO DEL MENU ---
+        // Uso de los metodos
+        finders()
+        setupMenu()
+        setupRecyclerView()
+        setupListeners()
+        setupOnBackPressed()
+    } // --- Fin de onCreate ---
+
+    /**
+     * Maneja los clics en los elementos del menú de la barra de acciones.
+     * Si el elemento es el ícono del menú, abre el menú lateral.
+     */
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    // --- Métodos de Configuración (Setup) ---
+
+    /**
+     * Vincula las variables de la clase con sus vistas correspondientes en el layout XML
+     * y carga las notas guardadas
+     */
+    private fun finders() {
+        recyclerView = findViewById(R.id.recyclerView)
+        accionBoton = findViewById(R.id.accionBoton)
+        menuIcon = findViewById(R.id.menu_icon)
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
 
-        toggle = androidx.appcompat.app.ActionBarDrawerToggle(
-            this,
-            drawerLayout,
-            R.string.open,
-            R.string.close
-        )
+        notes = loadNotes()
+    }
+
+    /**
+     * Configura el Navigation Drawer (menú lateral), incluyendo el ActionBarDrawerToggle
+     * y el listener para los clics en sus elementos.
+     */
+    private fun setupMenu() {
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         navigationView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_notas -> {
-                    drawerLayout.closeDrawers()
-                }
-
-                R.id.nav_configuracion -> {
-                    // Lógica para ir a la pantalla de configuración
-                    drawerLayout.closeDrawers()
-                }
-
-                R.id.nav_acerca_de -> {
-                    // Lógica para ir a la pantalla "Acerca de"
-                    drawerLayout.closeDrawers()
-                }
-            }
+            // Cierra el menú después de cualquier selección
+            drawerLayout.closeDrawers()
             true
-        } // --- FIN CODIGO DEL MENU ---
-
-        onBackPressedCallback = object : OnBackPressedCallback(false) {
-            override fun handleOnBackPressed() {
-                // Esta es la lógica que se ejecutará cuando el callback esté habilitado
-                // y el usuario presione "Atrás".
-                exitSelectionMode()
-            }
         }
-        // 2. Añadir el callback al dispatcher.
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
 
-        recyclerView = findViewById(R.id.recyclerView)
-        accionBoton = findViewById(R.id.accionBoton)
-        menuIcon = findViewById(R.id.menu_icon)
-
-        // Configurar el listener para el icono del menú
-        menuIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
-
-        // --- Logica del menu ---
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // Comprobar si el menú lateral está abierto
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    // Si está abierto, cerrarlo
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                } else {
-                    // Si el menú está cerrado, realizar la acción de retroceso por defecto.
-                    // Para ello, desactivamos temporalmente este callback y volvemos a llamar al dispatcher.
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
-                }
-            }
-        }
-
-        // Añadir el callback al dispatcher
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-        // --- Fin logica del menu ---
-
-        notes = loadNotes()
+    /**
+     * Inicializa el [RecyclerView], su [NoteAdapter] y el [LinearLayoutManager].
+     * Define las acciones a realizar ante un clic normal o un clic largo en una nota.
+     */
+    private fun setupRecyclerView() {
         adapter = NoteAdapter(notes, { note, position ->
             // Si estamos en modo de selección, el clic normal alterna la selección
             if (adapter.selectionMode) {
                 adapter.toggleSelection(position)
-                // Oculta el botón de borrar si no queda nada seleccionado
                 if (adapter.getSelectedNotes().isEmpty()) {
                     exitSelectionMode()
                 }
             } else {
-                // Envia a traves del intent los datos de la nota a NotaDetalActivity
+                // Lanza la actividad de detalle para ver o editar la nota
                 val intent = Intent(this, NoteDetailActivity::class.java).apply {
                     putExtra(NoteDetailActivity.EXTRA_NOTE_TITULO, note.text)
                     putExtra(NoteDetailActivity.EXTRA_NOTE_DESCIPCION, note.description)
@@ -170,29 +169,90 @@ class MainActivity : AppCompatActivity() {
         }, { position ->
             // El clic largo inicia el modo de selección
             if (!adapter.selectionMode) {
-                adapter.startSelectionMode(position)
-                enterSelectionMode()
+                enterSelectionMode(position)
             }
-
         })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-
-        // La configuración inicial del listener se moverá a una función
-        // para poder restaurarla después.
-        setAddNoteListener()
-
     }
 
+    /**
+     * Configura los listeners iniciales para las vistas interactivas, como el botón de acción
+     * principal y el ícono del menú.
+     */
+    private fun setupListeners() {
+        // Configurar el listener para el icono del menú
+        menuIcon.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        // La configuración inicial del listener es para añadir una nota
+        setAddNoteListener()
+    }
+
+    /**
+     * Configura el comportamiento del botón de retroceso del sistema.
+     * Gestiona el cierre del menú lateral y la salida del modo de selección
+     * antes de ejecutar la acción de retroceso por defecto.
+     */
+    private fun setupOnBackPressed() {
+        onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    drawerLayout.isDrawerOpen(GravityCompat.START) -> drawerLayout.closeDrawer(GravityCompat.START)
+                    adapter.selectionMode -> exitSelectionMode()
+                    else -> {
+                        // Desactivamos temporalmente para evitar un bucle y llamamos a la acción original
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
+
+    // --- Lógica del Modo de Selección ---
+
+    /**
+     * Activa el modo de selección múltiple en la UI.
+     * Cambia la apariencia y la funcionalidad del botón de acción para permitir el borrado.
+     * @param position La posición inicial del elemento que activó el modo de selección.
+     */
+    private fun enterSelectionMode(position: Int) {
+        adapter.startSelectionMode(position)
+        setDeleteNotesListener()
+    }
+
+    /**
+     * Desactiva el modo de selección múltiple.
+     * Limpia la selección en el adaptador y restaura el botón de acción a su estado original.
+     */
+    private fun exitSelectionMode() {
+        adapter.clearSelection()
+        setAddNoteListener()
+    }
+
+    /**
+     * Configura el botón de acción para que su funcionalidad sea la de añadir una nueva nota.
+     */
     private fun setAddNoteListener() {
+        accionBoton.text = "Agregar nota"
+        accionBoton.setBackgroundColor(ContextCompat.getColor(this, R.color.my_blue_primary))
         accionBoton.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
         }
     }
 
+    /**
+     * Configura el botón de acción para que su funcionalidad sea la de borrar las notas seleccionadas.
+     */
     private fun setDeleteNotesListener() {
+        accionBoton.text = "Borrar seleccionados"
+        accionBoton.setBackgroundColor(ContextCompat.getColor(this, R.color.my_red_error))
         accionBoton.setOnClickListener {
             val selectedNotes = adapter.getSelectedNotes()
             notes.removeAll(selectedNotes.toSet())
@@ -202,43 +262,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun enterSelectionMode() {
-        // Transformamos el botón para que sea "Borrar"
-        accionBoton.text = "Borrar seleccionados"
-        // Opcional: Cambiamos el color para que sea más visual
-        accionBoton.setBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                R.color.my_red_error
-            )
-        )
-        // Cambiamos la acción que ejecutará el botón
-        setDeleteNotesListener()
+    // --- Persistencia de Datos (Guardar y Cargar) ---
 
-        // Habilitamos el callback para el botón "atrás"
-        onBackPressedCallback.isEnabled = true
-    }
-
-    private fun exitSelectionMode() {
-        adapter.clearSelection()
-
-        // Restauramos el botón a su estado original "Agregar Nota"
-        accionBoton.text = "Agregar nota"
-        // Restauramos el color original
-        accionBoton.setBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                R.color.my_blue_primary
-            )
-        )
-
-        // Restauramos la acción original del botón
-        setAddNoteListener()
-
-        // Deshabilitamos el callback
-        onBackPressedCallback.isEnabled = false
-    }
-
+    /**
+     * Guarda la lista actual de notas en [SharedPreferences].
+     * Las notas se serializan a un único String usando separadores personalizados.
+     */
     private fun saveNotes() {
         val prefs = getSharedPreferences("notas", MODE_PRIVATE)
         val editor = prefs.edit()
@@ -248,6 +277,11 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
+    /**
+     * Carga la lista de notas desde [SharedPreferences].
+     * Si no hay datos guardados o los datos están vacíos, devuelve una lista mutable vacía.
+     * @return Una [MutableList] de objetos [Note].
+     */
     private fun loadNotes(): MutableList<Note> {
         val prefs = getSharedPreferences("notas", MODE_PRIVATE)
         val data = prefs.getString("lista", null) ?: return mutableListOf()
@@ -261,12 +295,5 @@ class MainActivity : AppCompatActivity() {
                 null // Ignora las notas con formato incorrecto
             }
         }.toMutableList()
-    }
-
-    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
-        if (toggle.onOptionsItemSelected(item)) {
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }
