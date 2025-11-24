@@ -22,11 +22,6 @@ import com.google.android.material.navigation.NavigationView
  */
 class MainActivity : AppCompatActivity() {
 
-    // ---- Lista de cosas a hacer-----
-    // todo cambiar entre tema claro y oscuro
-    // todo cambiar el fondo de la descipcion para que parezca MD
-    // todo arreglar el fondo negro en el mensaje de error o cambiarlo a un toast
-
     // --- Variables y Vistas de la Clase ---
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NoteAdapter
@@ -84,6 +79,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    // --- Fin de: Launchers para resultados de Actividades ---
+
+
+    // --- OnCreate ---
+
     /**
      * Punto de entrada de la actividad. Se llama cuando la actividad se crea por primera vez.
      * Orquesta la inicialización de las vistas, datos, listeners y otros componentes.
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         setupListeners()
         setupOnBackPressed()
-    } // --- Fin de onCreate ---
+    } // --- Fin de: onCreate ---
 
     /**
      * Maneja los clics en los elementos del menú de la barra de acciones.
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    // --- Métodos de Configuración (Setup) ---
+    // --- Métodos de Configuración y Inicialización ---
 
     /**
      * Vincula las variables de la clase con sus vistas correspondientes en el layout XML
@@ -200,7 +200,10 @@ class MainActivity : AppCompatActivity() {
         onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 when {
-                    drawerLayout.isDrawerOpen(GravityCompat.START) -> drawerLayout.closeDrawer(GravityCompat.START)
+                    drawerLayout.isDrawerOpen(GravityCompat.START) -> drawerLayout.closeDrawer(
+                        GravityCompat.START
+                    )
+
                     adapter.selectionMode -> exitSelectionMode()
                     else -> {
                         // Desactivamos temporalmente para evitar un bucle y llamamos a la acción original
@@ -213,6 +216,8 @@ class MainActivity : AppCompatActivity() {
         }
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
+
+    // --- Fin de: Métodos de Configuración y Inicialización ---
 
     // --- Lógica del Modo de Selección ---
 
@@ -261,8 +266,10 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
     }
+    // --- Fin de: Lógica del Modo de Selección ---
 
-    // --- Persistencia de Datos (Guardar y Cargar) ---
+
+    // --- Lógica de guardado y cargado de datos ---
 
     /**
      * Guarda la lista actual de notas en [SharedPreferences].
@@ -296,4 +303,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.toMutableList()
     }
+
+    // --- Fin de: Lógica de guardado y cargado de datos ---
+
 }
