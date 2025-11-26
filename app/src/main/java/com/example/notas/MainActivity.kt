@@ -101,6 +101,23 @@ class MainActivity : AppCompatActivity() {
     } // --- Fin de: onCreate ---
 
     /**
+     * Se llama cada vez que la actividad vuelve al primer plano.
+     * Recargamos las notas por si se borraron desde Configuración.
+     */
+    override fun onResume() {
+        super.onResume()
+        // Recargamos la lista desde las SharedPreferences
+        val listaActualizada = loadNotes()
+
+        // Limpiamos la lista en memoria y añadimos las nuevas
+        notes.clear()
+        notes.addAll(listaActualizada)
+
+        // Avisamos al adaptador
+        adapter.notifyDataSetChanged()
+    }
+
+    /**
      * Maneja los clics en los elementos del menú de la barra de acciones.
      * Si el elemento es el ícono del menú, abre el menú lateral.
      */
@@ -138,7 +155,22 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        navigationView.setNavigationItemSelectedListener {
+        navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_notas -> {
+                    // Ya estamos en notas, solo cerramos el menú
+                }
+
+                R.id.nav_configuracion -> {
+                    val intent = Intent(this, ConfiguracionActivity::class.java)
+                    startActivity(intent)
+                }
+
+                R.id.nav_acerca_de -> {
+                    // Aquí podrías poner otra actividad o un Toast
+                    // Toast.makeText(this, "App Notas v1.0", Toast.LENGTH_SHORT).show()
+                }
+            }
             // Cierra el menú después de cualquier selección
             drawerLayout.closeDrawers()
             true
